@@ -23,7 +23,7 @@ var v = ([1,2,3] : Version).withBuild('abc');
 Versions can be easily compared:
 
 ```haxe
-('1.0.0' : Version) > ('1.0.0-alpha') // yields true
+('1.0.0' : Version) > ('1.0.0-alpha' : Version) // yields true
 ```
 
 A version with pre-release and build looks like:
