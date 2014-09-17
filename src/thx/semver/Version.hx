@@ -14,7 +14,7 @@ abstract Version(SemVer) from SemVer to SemVer {
     return new Version(major, minor, patch, pre, build);
   }
 
-  public inline function new(major = 0, minor = 0, patch = 0, pre : Array<Identifier>, build : Array<Identifier>)
+  inline function new(major : Int, minor : Int, patch : Int, pre : Array<Identifier>, build : Array<Identifier>)
     this = {
       version : [major, minor, patch],
       pre : pre,
@@ -26,6 +26,21 @@ abstract Version(SemVer) from SemVer to SemVer {
   public var patch(get, never) : Int;
   public var pre(get, never) : String;
   public var build(get, never) : String;
+
+  public function nextMajor()
+    return new Version(major+1, 0, 0, [], []);
+
+  public function nextMinor()
+    return new Version(major, minor+1, 0, [], []);
+
+  public function nextPatch()
+    return new Version(major, minor, patch+1, [], []);
+
+  public function withPre(pre : String, ?build : String)
+    return new Version(major, minor, patch, parseIdentifiers(pre), parseIdentifiers(build));
+
+  public function withBuild(build : String)
+    return new Version(major, minor, patch, this.pre, parseIdentifiers(build));
 
   @:to public function toString() {
     var v = this.version.join('.');
