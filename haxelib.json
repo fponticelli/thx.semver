@@ -1,0 +1,14 @@
+{
+  "name": "thx.semver",
+  "url": "https://github.com/fponticelli/thx.semver",
+  "license": "MIT",
+  "classPath": "src",
+  "tags": ["thx", "version", "semantic version", "semver"],
+  "description": "Semantic Version Library for Haxe",
+  "releasenote": "initial release",
+  "version": "0.0.1",
+  "contributors": ["fponticelli"],
+  "dependecies" : {
+    "thx.core" : ""
+  }
+}
