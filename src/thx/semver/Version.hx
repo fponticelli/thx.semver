@@ -14,6 +14,13 @@ abstract Version(SemVer) from SemVer to SemVer {
     return new Version(major, minor, patch, pre, build);
   }
 
+  @:from public static function arrayToVersion(a : Array<Int>) {
+    a = (null == a ? [] : a).map(function(v) return v < 0 ? -v : v)
+      .concat([0,0,0])
+      .slice(0, 3);
+    return new Version(a[0], a[1], a[2], [], []);
+  }
+
   inline function new(major : Int, minor : Int, patch : Int, pre : Array<Identifier>, build : Array<Identifier>)
     this = {
       version : [major, minor, patch],
@@ -72,17 +79,14 @@ abstract Version(SemVer) from SemVer to SemVer {
     return greaterThanIdentifiers(this.pre, (other : SemVer).pre);
   }
 
-  @:op(A>=B) public function greaterThanOrEqual(other : Version) {
+  @:op(A>=B) public function greaterThanOrEqual(other : Version)
     return equals(other) || greaterThan(other);
-  }
 
-  @:op(A<B) public function lesserThan(other : Version) {
+  @:op(A<B) public function lesserThan(other : Version)
     return !greaterThanOrEqual(other);
-  }
 
-  @:op(A<=B) public function lesserThanOrEqual(other : Version) {
+  @:op(A<=B) public function lesserThanOrEqual(other : Version)
     return !greaterThan(other);
-  }
 
   inline function get_major() return this.version[0];
   inline function get_minor() return this.version[1];

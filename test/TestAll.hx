@@ -40,4 +40,8 @@ class TestAll {
     Assert.isTrue(('0.0.1-z+a.12' : Version) == ('0.0.1-z+a.1' : Version)); // builds do not make a difference
     Assert.isTrue(('0.0.1-z+b.1' : Version) == ('0.0.1-z+a.12' : Version)); // builds do not make a difference
   }
+
+  public function testFromArray() {
+    Assert.isTrue(('1.2.3' : Version) == ([1,2,3] : Version));
+  }
 }
