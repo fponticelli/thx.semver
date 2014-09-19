@@ -43,6 +43,12 @@ abstract Version(SemVer) from SemVer to SemVer {
   public function nextPatch()
     return new Version(major, minor, patch+1, [], []);
 
+  public function nextPre()
+    return new Version(major, minor, patch, nextIdentifiers((this : SemVer).pre), []);
+
+  public function nextBuild()
+    return new Version(major, minor, patch, (this : SemVer).pre, nextIdentifiers((this : SemVer).build));
+
   public function withPre(pre : String, ?build : String)
     return new Version(major, minor, patch, parseIdentifiers(pre), parseIdentifiers(build));
 
@@ -135,6 +141,19 @@ abstract Version(SemVer) from SemVer to SemVer {
         case _: return false;
       }
     return false;
+  }
+
+  static function nextIdentifiers(identifiers : Array<Identifier>) : Array<Identifier> {
+    var identifiers = identifiers.copy(),
+        i = identifiers.length;
+    while(--i >= 0) switch (identifiers[i]) {
+      case IntId(id):
+        identifiers[i] = IntId(id+1);
+        break;
+      case _:
+    }
+    if(i < 0) throw 'no numeric identifier found in $identifiers';
+    return identifiers;
   }
 
   static var SANITIZER = ~/[^0-9A-Za-z-]/g;
