@@ -8,7 +8,5 @@
   "releasenote": "initial release",
   "version": "0.0.1",
   "contributors": ["fponticelli"],
-  "dependecies" : {
-    "thx.core" : ""
-  }
+  "dependecies" : {}
 }
