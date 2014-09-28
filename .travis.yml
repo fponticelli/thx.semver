@@ -11,8 +11,6 @@ env:
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - env: TARGET=cs
 
 # Install Haxe and dependencies before running the test.
 before_script:
