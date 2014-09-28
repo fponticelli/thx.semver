@@ -1,0 +1,8 @@
+-cp src
+-cp test
+-lib thx.core
+-lib utest
+-cs bin/cs
+-main TestAll
+
+-cmd mono ./bin/cs/bin/TestAll.exe

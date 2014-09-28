@@ -1,0 +1,8 @@
+-cp src
+-cp test
+-lib thx.core
+-lib utest
+-cpp bin/cpp
+-main TestAll
+
+-cmd ./bin/cpp/TestAll

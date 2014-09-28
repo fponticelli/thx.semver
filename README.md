@@ -1,5 +1,7 @@
 # thx.semver
 
+[![Build Status](https://travis-ci.org/fponticelli/thx.semver.svg)](https://travis-ci.org/fponticelli/thx.semver)
+
 Semantic Version library for Haxe. The library provides an abstract type `thx.semver.Version` that represents a release version as described in the [Semantic Versioning Specification 2.0.0](http://semver.org/).
 
 To create a version you can use a string:
