@@ -40,3 +40,17 @@ Also generating new versions is very easy:
 var v : Version = '0.9.17';
 trace(v.nextMinor()); // echoes '0.10.0'
 ```
+
+## install
+
+From the command line just type:
+
+```bash
+haxelib install thx.semver
+```
+
+To use the `dev` version do:
+
+```bash
+haxelib git thx.core https://github.com/fponticelli/thx.semver.git
+```
