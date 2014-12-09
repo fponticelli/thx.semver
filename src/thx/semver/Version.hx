@@ -55,6 +55,9 @@ abstract Version(SemVer) from SemVer to SemVer {
   public function withBuild(build : String)
     return new Version(major, minor, patch, this.pre, parseIdentifiers(build));
 
+  public inline function satisfies(rule : VersionRule) : Bool
+    return rule.isSatisfiedBy(this);
+
   @:to public function toString() {
     var v = this.version.join('.');
     if(this.pre.length > 0)
