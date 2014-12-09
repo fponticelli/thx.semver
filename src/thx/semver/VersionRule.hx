@@ -18,9 +18,9 @@ abstract VersionRule(SemVerComparator) from SemVerComparator to SemVerComparator
 enum SemVerComparator {
   EqualVersion(ver : SemVer);
   GreaterThanVersion(ver : SemVer);
-  GreaterOrEqualThanVersion(ver : SemVer);
+  GreaterThanOrEqualVersion(ver : SemVer);
   LessThanVersion(ver : SemVer);
-  LessOrEqualThanVersion(ver : SemVer);
+  LessThanOrEqualVersion(ver : SemVer);
   AndMatch(a : SemVerComparator, b : SemVerComparator);
   OrMatch(a : SemVerComparator, b : SemVerComparator);
 }
