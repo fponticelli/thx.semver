@@ -88,10 +88,10 @@ abstract Version(SemVer) from SemVer to SemVer {
   @:op(A>=B) public function greaterThanOrEqual(other : Version)
     return equals(other) || greaterThan(other);
 
-  @:op(A<B) public function lesserThan(other : Version)
+  @:op(A<B) public function lessThan(other : Version)
     return !greaterThanOrEqual(other);
 
-  @:op(A<=B) public function lesserThanOrEqual(other : Version)
+  @:op(A<=B) public function lessThanOrEqual(other : Version)
     return !greaterThan(other);
 
   inline function get_major() return this.version[0];
