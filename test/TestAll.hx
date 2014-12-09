@@ -46,6 +46,42 @@ class TestAll {
     Assert.isTrue(('1.2.3' : Version) == ([1,2,3] : Version));
   }
 
+  function v(?major : Int, ?minor : Int, ?patch : Int, ?pre : Array<Identifier>, ?build : Array<Identifier>) {
+    var version = [];
+    if(null != major)
+      version.push(major);
+    if(null != minor)
+      version.push(minor);
+    if(null != patch)
+      version.push(patch);
+    pre = null != pre ? pre : [];
+    build = null != build ? build : [];
+
+    return {
+      version : version,
+      pre : pre,
+      build : build
+    }
+  }
+
+  public function testParseVersionRule() {
+    var assertions = [
+      // basic operators
+      { test : "1.2.3", expected : EqualVersion(v(1,2,3)) },
+      { test : "=1.2.3", expected : EqualVersion(v(1,2,3)) },
+      { test : "v1.2.3", expected : EqualVersion(v(1,2,3)) },
+      { test : ">1.2.3", expected : GreaterThanVersion(v(1,2,3)) },
+      { test : ">=1.2.3", expected : GreaterThanOrEqualVersion(v(1,2,3)) },
+      { test : "<1.2.3", expected : LessThanVersion(v(1,2,3)) },
+      { test : "<=1.2.3", expected : LessThanOrEqualVersion(v(1,2,3)) },
+    ];
+
+    for(assertion in assertions) {
+      var rule : VersionRule = assertion.test;
+      Assert.same(rule, assertion.expected, 'test "${assertion.test}"" should be equivalent to ${assertion.expected} but it is ${rule}"');
+    }
+  }
+
   public function testVersionRule() {
     var assertions = [
       { rule : ">=1.2.7",
