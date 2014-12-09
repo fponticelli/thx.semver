@@ -93,27 +93,28 @@ class TestAll {
       // Tilde Ranges ~1.2.3 ~1.2 ~1
       // Allows patch-level changes if a minor version is specified on the comparator.
       // Allows minor-level changes if not.
-      // ~1.2.3 := >=1.2.3 <1.(2+1).0 := >=1.2.3 <1.3.0
-      // ~1.2 := >=1.2.0 <1.(2+1).0 := >=1.2.0 <1.3.0 (Same as 1.2.x)
-      // ~1 := >=1.0.0 <(1+1).0.0 := >=1.0.0 <2.0.0 (Same as 1.x)
-      // ~0.2.3 := >=0.2.3 <0.(2+1).0 := >=0.2.3 <0.3.0
-      // ~0.2 := >=0.2.0 <0.(2+1).0 := >=0.2.0 <0.3.0 (Same as 0.2.x)
-      // ~0 := >=0.0.0 <(0+1).0.0 := >=0.0.0 <1.0.0 (Same as 0.x)
-      // ~1.2.3-beta.2 := >=1.2.3-beta.2 <1.3.0 Note that prereleases in the 1.2.3 version will be allowed, if they are greater than or equal to beta.2. So, 1.2.3-beta.4 would be allowed, but 1.2.4-beta.2 would not, because it is a prerelease of a different [major, minor, patch] tuple.
+      { rule : "~1.2.3", satisfies : ["1.2.3"], unsatisfies : ["1.3.0"] },
+      { rule : "~1.2", satisfies : ["1.2.0", "1.99.0"], unsatisfies : ["1.3.0"] },
+      { rule : "~1", satisfies : ["1.0.0", "1.99.0"], unsatisfies : ["0.0.0", "2.0.0"] },
+      { rule : "~0.2.3", satisfies : ["0.2.3"], unsatisfies : ["0.3.0"] },
+      { rule : "~0.2", satisfies : ["0.2.0"], unsatisfies : ["0.3.0"] },
+      { rule : "~0", satisfies : ["0.0.0"], unsatisfies : ["1.0.0"] },
+      { rule : "~1.2.3-beta.2", satisfies : ["1.2.3-beta.4"], unsatisfies : ["1.2.4-beta.2"] },
 
       // Caret Ranges ^1.2.3 ^0.2.5 ^0.0.4
-      // ^1.2.3 := >=1.2.3 <2.0.0
-      // ^0.2.3 := >=0.2.3 <0.3.0
-      // ^0.0.3 := >=0.0.3 <0.0.4
-      // ^1.2.3-beta.2 := >=1.2.3-beta.2 <2.0.0 Note that prereleases in the 1.2.3 version will be allowed, if they are greater than or equal to beta.2. So, 1.2.3-beta.4 would be allowed, but 1.2.4-beta.2 would not, because it is a prerelease of a different [major, minor, patch] tuple.
-      // ^0.0.3-beta := >=0.0.3-beta <0.0.4 Note that prereleases in the 0.0.3 version only will be allowed, if they are greater than or equal to beta. So, 0.0.3-pr.2 would be allowed.
+      { rule : "^1.2.3", satisfies : ["1.2.3", "1.3.0"], unsatisfies : ["2.0.0"] },
+      { rule : "^0.2.3", satisfies : ["0.2.3"], unsatisfies : ["0.3.0"] },
+      { rule : "^0.0.3", satisfies : ["0.0.3"], unsatisfies : ["0.0.4"] },
 
-      // ^1.2.x := >=1.2.0 <2.0.0
-      // ^0.0.x := >=0.0.0 <0.1.0
-      // ^0.0 := >=0.0.0 <0.1.0
+      { rule : "^1.2.3-beta.2", satisfies : ["1.2.3-beta.2", "1.2.3-beta.4"], unsatisfies : ["1.2.4-beta.2", "2.0.0"] },
+      { rule : "^0.0.3-beta", satisfies : ["0.0.3-pr.2"], unsatisfies : ["0.0.4"] },
 
-      // ^1.x := >=1.0.0 <2.0.0
-      // ^0.x := >=0.0.0 <1.0.0
+      { rule : "^1.2.x", satisfies : ["1.2.0"], unsatisfies : ["2.0.0"] },
+      { rule : "^0.0.x", satisfies : ["0.0.0"], unsatisfies : ["0.1.0"] },
+      { rule : "^0.0", satisfies : ["0.0.0"], unsatisfies : ["0.1.0"] },
+
+      { rule : "^1.x", satisfies : ["1.0.0"], unsatisfies : ["2.0.0"] },
+      { rule : "^0.x", satisfies : ["0.0.0"], unsatisfies : ["1.0.0"] }
     ];
 
     for(assertion in assertions) {
