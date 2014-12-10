@@ -11,7 +11,22 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
   }
 
   public function isSatisfiedBy(version : Version) : Bool {
-    return false; // TODO implement
+    return switch this {
+      case EqualVersion(ver):
+        version == ver;
+      case GreaterThanVersion(ver):
+        version > ver;
+      case GreaterThanOrEqualVersion(ver):
+        version >= ver;
+      case LessThanVersion(ver):
+        version < ver;
+      case LessThanOrEqualVersion(ver):
+        version <= ver;
+      case AndRule(a, b):
+        (a : VersionRule).isSatisfiedBy(version) && (b : VersionRule).isSatisfiedBy(version);
+      case OrRule(a, b):
+        (a : VersionRule).isSatisfiedBy(version) || (b : VersionRule).isSatisfiedBy(version);
+    };
   }
 
   @:to public function toString()
