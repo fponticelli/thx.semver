@@ -13,6 +13,24 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
   public function isSatisfiedBy(version : Version) : Bool {
     return false; // TODO implement
   }
+
+  @:to public function toString()
+    return switch this {
+      case EqualVersion(ver):
+        ver;
+      case GreaterThanVersion(ver):
+        '>$ver';
+      case GreaterThanOrEqualVersion(ver):
+        '>=$ver';
+      case LessThanVersion(ver):
+        '<$ver';
+      case LessThanOrEqualVersion(ver):
+        '<=$ver';
+      case AndRule(a, b):
+        '$a $b';
+      case OrRule(a, b):
+        '$a || $b';
+    };
 }
 
 enum VersionComparator {
