@@ -1,14 +1,109 @@
 package thx.semver;
 
-import thx.semver.Version;
+using thx.semver.Version;
+using StringTools;
 
 abstract VersionRule(VersionComparator) from VersionComparator to VersionComparator {
+  static var VERSION = ~/^(v|=|>|>=|<|<=|~|^)?(\d+|[x*])\.(\d+|[x*])?\.(\d+|[x*])?(?:[-]([a-z0-9.-]+))?(?:[+]([a-z0-9.-]+))?$/i;
   @:from public static function stringToVersionRule(s : String) : VersionRule {
+    var ors = s.split("||").map(function(comp) {
+      comp = comp.trim();
+      var p = comp.split(" - ");
+      return if(p.length == 1) {
+        comp = comp.trim();
+        p = (~/\s+/).split(comp);
+        if(p.length == 1) {
+          if(!VERSION.match(comp)) {
+            throw 'invalid pattern $comp';
+          } else {
+            // one term pattern
+            switch VERSION.matched(1) {
+              case "v", "=", "", null:
+                var v = versionArray(VERSION);
+                switch v.length {
+                  case 0:
+                    GreaterThanOrEqualVersion(Version.arrayToVersion([0,0,0]).withPre(VERSION.matched(5), VERSION.matched(6)));
+                  case 1:
+                    // TODO
+                    EqualVersion(Version.arrayToVersion([1234, 999, 9999]));
+                  case 2:
+                    // TODO
+                    EqualVersion(Version.arrayToVersion([2345, 999, 9999]));
+                  case 3:
+                    EqualVersion(Version.arrayToVersion(v).withPre(VERSION.matched(5), VERSION.matched(6)));
+                  case _:
+                    throw 'invalid pattern $comp';
+                };
+              case ">":
+                // TODO
+                EqualVersion(Version.arrayToVersion([567, 999, 9999]));
+              case ">=":
+                // TODO
+                EqualVersion(Version.arrayToVersion([678, 999, 9999]));
+              case "<":
+                // TODO
+                EqualVersion(Version.arrayToVersion([789, 999, 9999]));
+              case "<=":
+                // TODO
+                EqualVersion(Version.arrayToVersion([890, 999, 9999]));
+              case "~":
+                // TODO
+                EqualVersion(Version.arrayToVersion([901, 999, 9999]));
+              case "^":
+                // TODO
+                EqualVersion(Version.arrayToVersion([456, 999, 9999]));
+              case p: throw 'invalid prefix "$p" for rule $comp';
+            };
+          }
+        } else if(p.length == 2) {
+          // range, requires >||>= && <||<=
+          // TODO
+          EqualVersion(Version.arrayToVersion([9999, 999, 9999]));
+        } else {
+          throw 'invalid pattern $comp';
+        }
+      } else if(p.length == 2) {
+        AndRule(
+          GreaterThanOrEqualVersion(p[0].trim().stringToVersion()),
+          LessThanOrEqualVersion(p[1].trim().stringToVersion())
+        );
+      } else {
+        throw 'invalid pattern $comp';
+      }
+    });
+
+    var rule = null;
+    while(ors.length > 0) {
+      var r = ors.pop();
+      if(null == rule)
+        rule = r;
+      else
+        rule = OrRule(r, rule);
+    }
+    return rule;
+
     // trim left/right
     // normalize whitespaces in between
     // parse one Comparator at the time
-    return EqualVersion(Version.arrayToVersion([9999, 999, 9999])); // TODO implement
+    //return EqualVersion(Version.arrayToVersion([9999, 999, 9999])); // TODO implement
   }
+
+  static var IS_DIGITS = ~/^\d+$/;
+  static function versionArray(re : EReg) {
+    var arr = [],
+        t;
+    for(i in 2...5) {
+      t = re.matched(i);
+      if(null != t && IS_DIGITS.match(t))
+        arr.push(Std.parseInt(t));
+      else
+        break;
+    }
+    return arr;
+  }
+
+  public static function versionRuleIsValid(rule : String)
+    return try stringToVersionRule(rule) != null catch(e : Dynamic) false;
 
   public function isSatisfiedBy(version : Version) : Bool {
     return switch this {
