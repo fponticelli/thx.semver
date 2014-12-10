@@ -15,12 +15,12 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
   }
 }
 
-enum SemVerComparator {
-  EqualVersion(ver : SemVer);
-  GreaterThanVersion(ver : SemVer);
-  GreaterThanOrEqualVersion(ver : SemVer);
-  LessThanVersion(ver : SemVer);
-  LessThanOrEqualVersion(ver : SemVer);
-  AndRule(a : SemVerComparator, b : SemVerComparator);
-  OrRule(a : SemVerComparator, b : SemVerComparator);
+enum VersionComparator {
+  EqualVersion(ver : Version);
+  GreaterThanVersion(ver : Version);
+  GreaterThanOrEqualVersion(ver : Version);
+  LessThanVersion(ver : Version);
+  LessThanOrEqualVersion(ver : Version);
+  AndRule(a : VersionComparator, b : VersionComparator);
+  OrRule(a : VersionComparator, b : VersionComparator);
 }
