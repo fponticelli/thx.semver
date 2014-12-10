@@ -67,13 +67,170 @@ class TestAll {
   public function testParseVersionRule() {
     var assertions = [
       // basic operators
-      { test : "1.2.3", expected : EqualVersion(v(1,2,3)) },
-      { test : "=1.2.3", expected : EqualVersion(v(1,2,3)) },
-      { test : "v1.2.3", expected : EqualVersion(v(1,2,3)) },
-      { test : ">1.2.3", expected : GreaterThanVersion(v(1,2,3)) },
+      { test : "1.2.3",   expected : EqualVersion(v(1,2,3)) },
+      { test : "   =1.2.3"  , expected : EqualVersion(v(1,2,3)) },
+      { test : "v1.2.3",  expected : EqualVersion(v(1,2,3)) },
+      { test : ">1.2.3",  expected : GreaterThanVersion(v(1,2,3)) },
       { test : ">=1.2.3", expected : GreaterThanOrEqualVersion(v(1,2,3)) },
-      { test : "<1.2.3", expected : LessThanVersion(v(1,2,3)) },
+      { test : "<1.2.3",  expected : LessThanVersion(v(1,2,3)) },
       { test : "<=1.2.3", expected : LessThanOrEqualVersion(v(1,2,3)) },
+
+      { test : ">=1.2.7 <1.3.0",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,2,7)),
+          LessThanVersion(v(1,3,0))
+        )
+      },
+
+      { test : "1.x || >=2.5.0 || 5.0.0 - 7.2.3",
+        expected : OrRule(
+          AndRule(
+            GreaterThanOrEqualVersion(v(1,0,0)),
+            LessThanVersion(v(2,0,0))
+          ),
+          OrRule(
+            GreaterThanOrEqualVersion(v(2,5,0)),
+            OrRule(
+              GreaterThanOrEqualVersion(v(5,0,0)),
+              LessThanOrEqualVersion(v(7,2,3))
+            )
+          )
+        )
+      },
+
+      { test : "1.2.3 - 2.3.4",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,2,3)),
+          LessThanOrEqualVersion(v(2,3,4))
+        )
+      },
+
+      { test : "*",
+        expected : GreaterThanOrEqualVersion(v(0,0,0))
+      },
+
+      { test : "",
+        expected : GreaterThanOrEqualVersion(v(0,0,0))
+      },
+
+      { test : "1.x",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,2,3)),
+          LessThanVersion(v(2,0,0))
+        )
+      },
+
+      { test : "1",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,2,3)),
+          LessThanVersion(v(2,0,0))
+        )
+      },
+
+      { test : "1.2.x",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,2,0)),
+          LessThanVersion(v(1,3,0))
+        )
+      },
+
+      { test : "1.2",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,2,0)),
+          LessThanVersion(v(1,3,0))
+        )
+      },
+
+      { test : "~1.2.3",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,2,3)),
+          LessThanVersion(v(1,3,0))
+        )
+      },
+
+      { test : "~1.2",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,2,0)),
+          LessThanVersion(v(1,3,0))
+        )
+      },
+
+      { test : "~1",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,0,0)),
+          LessThanVersion(v(2,0,0))
+        )
+      },
+
+      { test : "~0.2.3",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(0,2,3)),
+          LessThanVersion(v(0,3,0))
+        )
+      },
+
+      { test : "~0.2",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(0,2,0)),
+          LessThanVersion(v(0,3,0))
+        )
+      },
+
+      { test : "~0",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(0,0,0)),
+          LessThanVersion(v(1,0,0))
+        )
+      },
+
+      { test : "^1.2.3",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,2,3)),
+          LessThanVersion(v(2,0,0))
+        )
+      },
+
+      { test : "^0.2.3",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(0,2,3)),
+          LessThanVersion(v(0,3,0))
+        )
+      },
+
+      { test : "^0.0.3",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(0,0,3)),
+          LessThanVersion(v(0,0,4))
+        )
+      },
+
+      { test : "^0.0.x",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(0,0,0)),
+          LessThanVersion(v(0,1,0))
+        )
+      },
+
+      { test : "^0.0",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(0,0,0)),
+          LessThanVersion(v(0,1,0))
+        )
+      },
+
+      { test : "^1.x",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(1,0,0)),
+          LessThanVersion(v(2,0,0))
+        )
+      },
+
+      { test : "^0.x",
+        expected : AndRule(
+          GreaterThanOrEqualVersion(v(0,0,0)),
+          LessThanVersion(v(1,0,0))
+        )
+      },
     ];
 
     for(assertion in assertions) {
