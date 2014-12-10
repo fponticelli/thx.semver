@@ -2,12 +2,12 @@ package thx.semver;
 
 import thx.semver.Version;
 
-abstract VersionRule(SemVerComparator) from SemVerComparator to SemVerComparator {
-  @:from public static function stringToVersionRule(s : String) {
+abstract VersionRule(VersionComparator) from VersionComparator to VersionComparator {
+  @:from public static function stringToVersionRule(s : String) : VersionRule {
     // trim left/right
     // normalize whitespaces in between
     // parse one Comparator at the time
-    return null; // TODO implement
+    return EqualVersion(Version.arrayToVersion([9999, 999, 9999])); // TODO implement
   }
 
   public function isSatisfiedBy(version : Version) : Bool {
