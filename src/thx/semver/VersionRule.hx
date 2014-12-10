@@ -21,6 +21,6 @@ enum SemVerComparator {
   GreaterThanOrEqualVersion(ver : SemVer);
   LessThanVersion(ver : SemVer);
   LessThanOrEqualVersion(ver : SemVer);
-  AndMatch(a : SemVerComparator, b : SemVerComparator);
-  OrMatch(a : SemVerComparator, b : SemVerComparator);
+  AndRule(a : SemVerComparator, b : SemVerComparator);
+  OrRule(a : SemVerComparator, b : SemVerComparator);
 }
