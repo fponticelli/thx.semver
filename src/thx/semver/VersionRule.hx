@@ -58,9 +58,24 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
                   GreaterThanOrEqualVersion(version),
                   LessThanVersion(version.nextMinor())
                 );
-              case ["^", _]:
-                // TODO
-                EqualVersion(Version.arrayToVersion([456, 999, 9999]));
+              case ["^", 1]:
+                var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
+                AndRule(
+                  GreaterThanOrEqualVersion(version),
+                  LessThanVersion(version.nextMajor())
+                );
+              case ["^", 2]:
+                var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
+                AndRule(
+                  GreaterThanOrEqualVersion(version),
+                  LessThanVersion(version.major == 0 ? version.nextMinor() : version.nextMajor())
+                );
+              case ["^", 3]:
+                var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
+                AndRule(
+                  GreaterThanOrEqualVersion(version),
+                  LessThanVersion(version.major == 0 ? (version.minor == 0 ? version.nextPatch() : version.nextMinor()) : version.nextMajor())
+                );
               case [p, _]: throw 'invalid prefix "$p" for rule $comp';
             };
           }
