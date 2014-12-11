@@ -4,7 +4,7 @@ using thx.semver.Version;
 using StringTools;
 
 abstract VersionRule(VersionComparator) from VersionComparator to VersionComparator {
-  static var VERSION = ~/^(v|=|>|>=|<|<=|~|^)?(\d+|[x*])\.(\d+|[x*])?\.(\d+|[x*])?(?:[-]([a-z0-9.-]+))?(?:[+]([a-z0-9.-]+))?$/i;
+  static var VERSION = ~/^(v|=|>|>=|<|<=|~|^)?(\d+|[x*])(?:\.(\d+|[x*]))?(?:\.(\d+|[x*]))?(?:[-]([a-z0-9.-]+))?(?:[+]([a-z0-9.-]+))?$/i;
   @:from public static function stringToVersionRule(s : String) : VersionRule {
     var ors = s.split("||").map(function(comp) {
       comp = comp.trim();
@@ -13,8 +13,10 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
         comp = comp.trim();
         p = (~/\s+/).split(comp);
         if(p.length == 1) {
-          if(!VERSION.match(comp)) {
-            throw 'invalid pattern $comp';
+          if(comp.length == 0) {
+            GreaterThanOrEqualVersion(Version.arrayToVersion([0,0,0]).withPre(VERSION.matched(5), VERSION.matched(6)));
+          } else if(!VERSION.match(comp)) {
+            throw 'invalid pattern "$comp"';
           } else {
             // one term pattern
             var v  = versionArray(VERSION),
@@ -22,14 +24,20 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
             switch [VERSION.matched(1), v.length] {
               case ["v", 0], ["=", 0], ["", 0], [null, 0]:
                 GreaterThanOrEqualVersion(Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6)));
-              case ["v", 3], ["=", 3], ["", 3], [null, 3]:
-                EqualVersion(Version.arrayToVersion(v).withPre(VERSION.matched(5), VERSION.matched(6)));
-              case ["v", _], ["=", _], ["", _], [null, _]:
+              case ["v", 1], ["=", 1], ["", 1], [null, 1]:
                 var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
                 AndRule(
                   GreaterThanOrEqualVersion(version),
                   LessThanVersion(version.nextMajor())
                 );
+              case ["v", 2], ["=", 2], ["", 2], [null, 2]:
+                var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
+                AndRule(
+                  GreaterThanOrEqualVersion(version),
+                  LessThanVersion(version.nextMinor())
+                );
+              case ["v", 3], ["=", 3], ["", 3], [null, 3]:
+                EqualVersion(Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6)));
               case [">", _]:
                 GreaterThanVersion(Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6)));
               case [">=", _]:
@@ -38,9 +46,18 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
                 LessThanVersion(Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6)));
               case ["<=", _]:
                 LessThanOrEqualVersion(Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6)));
-              case ["~", _]:
-                // TODO
-                EqualVersion(Version.arrayToVersion([901, 999, 9999]));
+              case ["~", 2], ["~", 3]:
+                var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
+                AndRule(
+                  GreaterThanOrEqualVersion(version),
+                  LessThanVersion(version.nextPatch())
+                );
+              case ["~", 1]:
+                var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
+                AndRule(
+                  GreaterThanOrEqualVersion(version),
+                  LessThanVersion(version.nextMajor())
+                );
               case ["^", _]:
                 // TODO
                 EqualVersion(Version.arrayToVersion([456, 999, 9999]));
@@ -48,9 +65,28 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
             };
           }
         } else if(p.length == 2) {
-          // range, requires >||>= && <||<=
-          // TODO
-          EqualVersion(Version.arrayToVersion([9999, 999, 9999]));
+          if(!VERSION.match(p[0]))
+            throw 'left hand parameter is not a valid version rule "${p[0]}"';
+          var lp  = VERSION.matched(1),
+              lva = versionArray(VERSION),
+              lvf = lva.concat([0, 0, 0]).slice(0, 3),
+              lv  = Version.arrayToVersion(lvf).withPre(VERSION.matched(5), VERSION.matched(6));
+
+          if(lp != ">" && lp != ">=")
+            throw 'invalid left parameter version prefix "${p[0]}", should be either > or >=';
+          if(!VERSION.match(p[1]))
+            throw 'left hand parameter is not a valid version rule "${p[0]}"';
+          var rp  = VERSION.matched(1),
+              rva = versionArray(VERSION),
+              rvf = rva.concat([0, 0, 0]).slice(0, 3),
+              rv  = Version.arrayToVersion(rvf).withPre(VERSION.matched(5), VERSION.matched(6));
+          if(rp != "<" && rp != "<=")
+            throw 'invalid right parameter version prefix "${p[1]}", should be either < or <=';
+
+          AndRule(
+            lp == ">" ? GreaterThanVersion(lv) : GreaterThanOrEqualVersion(lv),
+            rp == "<" ? LessThanVersion(rv) : LessThanOrEqualVersion(rv)
+          );
         } else {
           throw 'invalid pattern $comp';
         }
@@ -60,7 +96,7 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
           LessThanOrEqualVersion(p[1].trim().stringToVersion())
         );
       } else {
-        throw 'invalid pattern $comp';
+        throw 'invalid pattern "$comp"';
       }
     });
 
@@ -73,11 +109,6 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
         rule = OrRule(r, rule);
     }
     return rule;
-
-    // trim left/right
-    // normalize whitespaces in between
-    // parse one Comparator at the time
-    //return EqualVersion(Version.arrayToVersion([9999, 999, 9999])); // TODO implement
   }
 
   static var IS_DIGITS = ~/^\d+$/;
