@@ -32,7 +32,9 @@ abstract Version(SemVer) from SemVer to SemVer {
   public var minor(get, never) : Int;
   public var patch(get, never) : Int;
   public var pre(get, never) : String;
+  public var hasPre(get, never) : Bool;
   public var build(get, never) : String;
+  public var hasBuild(get, never) : Bool;
 
   public function nextMajor()
     return new Version(major+1, 0, 0, [], []);
@@ -101,8 +103,11 @@ abstract Version(SemVer) from SemVer to SemVer {
   inline function get_minor() return this.version[1];
   inline function get_patch() return this.version[2];
 
+
   inline function get_pre() return identifiersToString(this.pre);
+  inline function get_hasPre() return this.pre.length > 0;
   inline function get_build() return identifiersToString(this.build);
+  inline function get_hasBuild() return this.pre.length > 0;
 
   static function identifiersToString(ids : Array<Identifier>)
     return ids.map(function(id) return switch id {
