@@ -278,14 +278,14 @@ class TestAll {
       { rule : "1.x", satisfies : ["1.0.0", "1.99.0"], unsatisfies : ["0.0.0", "2.0.0"] },
       { rule : "1", satisfies : ["1.0.0", "1.99.0"], unsatisfies : ["0.0.0", "2.0.0"] },
 
-      { rule : "1.2.x", satisfies : ["1.2.0", "1.99.0"], unsatisfies : ["1.3.0"] },
-      { rule : "1.2", satisfies : ["1.2.0", "1.99.0"], unsatisfies : ["1.3.0"] },
+      { rule : "1.2.x", satisfies : ["1.2.0", "1.2.99"], unsatisfies : ["1.3.0"] },
+      { rule : "1.2", satisfies : ["1.2.0", "1.2.99"], unsatisfies : ["1.3.0"] },
 
       // Tilde Ranges ~1.2.3 ~1.2 ~1
       // Allows patch-level changes if a minor version is specified on the comparator.
       // Allows minor-level changes if not.
       { rule : "~1.2.3", satisfies : ["1.2.3"], unsatisfies : ["1.3.0"] },
-      { rule : "~1.2", satisfies : ["1.2.0", "1.99.0"], unsatisfies : ["1.3.0"] },
+      { rule : "~1.2", satisfies : ["1.2.0", "1.2.99"], unsatisfies : ["1.3.0"] },
       { rule : "~1", satisfies : ["1.0.0", "1.99.0"], unsatisfies : ["0.0.0", "2.0.0"] },
       { rule : "~0.2.3", satisfies : ["0.2.3"], unsatisfies : ["0.3.0"] },
       { rule : "~0.2", satisfies : ["0.2.0"], unsatisfies : ["0.3.0"] },
