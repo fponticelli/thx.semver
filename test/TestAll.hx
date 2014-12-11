@@ -63,7 +63,6 @@ class TestAll {
       build : build
     }
   }
-
   public function testParseVersionRule() {
     var assertions = [
       // basic operators
@@ -230,12 +229,11 @@ class TestAll {
           GreaterThanOrEqualVersion(v(0,0,0)),
           LessThanVersion(v(1,0,0))
         )
-      },
+      }
     ];
-
     for(assertion in assertions) {
       var rule : VersionRule = assertion.test;
-      Assert.same(rule, assertion.expected, 'test "${assertion.test}"" should be equivalent to ${assertion.expected} but it is ${rule}"');
+      Assert.same((rule : VersionComparator), assertion.expected, 'test "${assertion.test}"" should be equivalent to ${assertion.expected} but it is ${(rule : VersionComparator)}"');
     }
   }
 
