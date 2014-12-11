@@ -85,7 +85,7 @@ abstract Version(SemVer) from SemVer to SemVer {
       return minor > other.minor;
     if(patch != other.patch)
       return patch > other.patch;
-    if(this.pre.length == 0 && (other : SemVer).pre.length > 0)
+    if(hasPre && other.hasPre)
       return true;
     return greaterThanIdentifiers(this.pre, (other : SemVer).pre);
   }
