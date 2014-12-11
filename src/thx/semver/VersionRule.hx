@@ -115,10 +115,17 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
             throw 'right range parameter is not a valid version rule "${p[1]}"';
         if(VERSION.matched(1) != null && VERSION.matched(1) != "")
             throw 'right range parameter should not be prefixed "${p[1]}"';
-        var rv = Version.arrayToVersion(versionArray(VERSION).concat([0, 0, 0]).slice(0, 3)).withPre(VERSION.matched(5), VERSION.matched(6));
+        var rva = versionArray(VERSION),
+            rv = Version.arrayToVersion(rva.concat([0, 0, 0]).slice(0, 3)).withPre(VERSION.matched(5), VERSION.matched(6));
+
+        if(rva.length == 1)
+          rv = rv.nextMajor();
+        else if(rva.length == 2)
+          rv = rv.nextMinor();
+
         AndRule(
           GreaterThanOrEqualVersion(lv),
-          LessThanOrEqualVersion(rv)
+          rva.length == 3 ? LessThanOrEqualVersion(rv) : LessThanVersion(rv)
         );
       } else {
         throw 'invalid pattern "$comp"';
