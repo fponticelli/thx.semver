@@ -17,42 +17,37 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
             throw 'invalid pattern $comp';
           } else {
             // one term pattern
-            switch VERSION.matched(1) {
-              case "v", "=", "", null:
-                var v = versionArray(VERSION);
-                switch v.length {
-                  case 0:
-                    GreaterThanOrEqualVersion(Version.arrayToVersion([0,0,0]).withPre(VERSION.matched(5), VERSION.matched(6)));
-                  case 1:
-                    // TODO
-                    EqualVersion(Version.arrayToVersion([1234, 999, 9999]));
-                  case 2:
-                    // TODO
-                    EqualVersion(Version.arrayToVersion([2345, 999, 9999]));
-                  case 3:
-                    EqualVersion(Version.arrayToVersion(v).withPre(VERSION.matched(5), VERSION.matched(6)));
-                  case _:
-                    throw 'invalid pattern $comp';
-                };
-              case ">":
+            var v = versionArray(VERSION);
+            switch [VERSION.matched(1), v.length] {
+              case ["v", 0], ["=", 0], ["", 0], [null, 0]:
+                GreaterThanOrEqualVersion(Version.arrayToVersion([0,0,0]).withPre(VERSION.matched(5), VERSION.matched(6)));
+              case ["v", 1], ["=", 1], ["", 1], [null, 1]:
+                // TODO
+                EqualVersion(Version.arrayToVersion([1234, 999, 9999]));
+              case ["v", 2], ["=", 2], ["", 2], [null, 2]:
+                // TODO
+                EqualVersion(Version.arrayToVersion([2345, 999, 9999]));
+              case ["v", 3], ["=", 3], ["", 3], [null, 3]:
+                  EqualVersion(Version.arrayToVersion(v).withPre(VERSION.matched(5), VERSION.matched(6)));
+              case [">", _]:
                 // TODO
                 EqualVersion(Version.arrayToVersion([567, 999, 9999]));
-              case ">=":
+              case [">=", _]:
                 // TODO
                 EqualVersion(Version.arrayToVersion([678, 999, 9999]));
-              case "<":
+              case ["<", _]:
                 // TODO
                 EqualVersion(Version.arrayToVersion([789, 999, 9999]));
-              case "<=":
+              case ["<=", _]:
                 // TODO
                 EqualVersion(Version.arrayToVersion([890, 999, 9999]));
-              case "~":
+              case ["~", _]:
                 // TODO
                 EqualVersion(Version.arrayToVersion([901, 999, 9999]));
-              case "^":
+              case ["^", _]:
                 // TODO
                 EqualVersion(Version.arrayToVersion([456, 999, 9999]));
-              case p: throw 'invalid prefix "$p" for rule $comp';
+              case [p, _]: throw 'invalid prefix "$p" for rule $comp';
             };
           }
         } else if(p.length == 2) {
