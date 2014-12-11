@@ -89,7 +89,7 @@ class TestAll {
           ),
           OrRule(
             GreaterThanOrEqualVersion(v(2,5,0)),
-            OrRule(
+            AndRule(
               GreaterThanOrEqualVersion(v(5,0,0)),
               LessThanOrEqualVersion(v(7,2,3))
             )
@@ -114,14 +114,14 @@ class TestAll {
 
       { test : "1.x",
         expected : AndRule(
-          GreaterThanOrEqualVersion(v(1,2,3)),
+          GreaterThanOrEqualVersion(v(1,0,0)),
           LessThanVersion(v(2,0,0))
         )
       },
 
       { test : "1",
         expected : AndRule(
-          GreaterThanOrEqualVersion(v(1,2,3)),
+          GreaterThanOrEqualVersion(v(1,0,0)),
           LessThanVersion(v(2,0,0))
         )
       },
