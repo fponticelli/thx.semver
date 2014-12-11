@@ -4,7 +4,7 @@ using thx.semver.Version;
 using StringTools;
 
 abstract VersionRule(VersionComparator) from VersionComparator to VersionComparator {
-  static var VERSION = ~/^(v|=|>|>=|<|<=|~|^)?(\d+|[x*])(?:\.(\d+|[x*]))?(?:\.(\d+|[x*]))?(?:[-]([a-z0-9.-]+))?(?:[+]([a-z0-9.-]+))?$/i;
+  static var VERSION = ~/^(>=|<=|[v=><~^])?(\d+|[x*])(?:\.(\d+|[x*]))?(?:\.(\d+|[x*]))?(?:[-]([a-z0-9.-]+))?(?:[+]([a-z0-9.-]+))?$/i;
   @:from public static function stringToVersionRule(s : String) : VersionRule {
     var ors = s.split("||").map(function(comp) {
       comp = comp.trim();
@@ -16,7 +16,7 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
           if(comp.length == 0) {
             GreaterThanOrEqualVersion(Version.arrayToVersion([0,0,0]).withPre(VERSION.matched(5), VERSION.matched(6)));
           } else if(!VERSION.match(comp)) {
-            throw 'invalid pattern "$comp"';
+            throw 'invalid single pattern "$comp"';
           } else {
             // one term pattern
             var v  = versionArray(VERSION),
@@ -46,17 +46,17 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
                 LessThanVersion(Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6)));
               case ["<=", _]:
                 LessThanOrEqualVersion(Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6)));
-              case ["~", 2], ["~", 3]:
-                var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
-                AndRule(
-                  GreaterThanOrEqualVersion(version),
-                  LessThanVersion(version.nextPatch())
-                );
               case ["~", 1]:
                 var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
                 AndRule(
                   GreaterThanOrEqualVersion(version),
                   LessThanVersion(version.nextMajor())
+                );
+              case ["~", 2], ["~", 3]:
+                var version = Version.arrayToVersion(vf).withPre(VERSION.matched(5), VERSION.matched(6));
+                AndRule(
+                  GreaterThanOrEqualVersion(version),
+                  LessThanVersion(version.nextMinor())
                 );
               case ["^", _]:
                 // TODO
@@ -88,12 +88,22 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
             rp == "<" ? LessThanVersion(rv) : LessThanOrEqualVersion(rv)
           );
         } else {
-          throw 'invalid pattern $comp';
+          throw 'invalid multi pattern $comp';
         }
       } else if(p.length == 2) {
+        if(!VERSION.match(p[0]))
+            throw 'left range parameter is not a valid version rule "${p[0]}"';
+        if(VERSION.matched(1) != null && VERSION.matched(1) != "")
+            throw 'left range parameter should not be prefixed "${p[0]}"';
+        var lv = Version.arrayToVersion(versionArray(VERSION).concat([0, 0, 0]).slice(0, 3)).withPre(VERSION.matched(5), VERSION.matched(6));
+        if(!VERSION.match(p[1]))
+            throw 'right range parameter is not a valid version rule "${p[1]}"';
+        if(VERSION.matched(1) != null && VERSION.matched(1) != "")
+            throw 'right range parameter should not be prefixed "${p[1]}"';
+        var rv = Version.arrayToVersion(versionArray(VERSION).concat([0, 0, 0]).slice(0, 3)).withPre(VERSION.matched(5), VERSION.matched(6));
         AndRule(
-          GreaterThanOrEqualVersion(p[0].trim().stringToVersion()),
-          LessThanOrEqualVersion(p[1].trim().stringToVersion())
+          GreaterThanOrEqualVersion(lv),
+          LessThanOrEqualVersion(rv)
         );
       } else {
         throw 'invalid pattern "$comp"';
