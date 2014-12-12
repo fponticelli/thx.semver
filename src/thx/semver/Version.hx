@@ -79,15 +79,30 @@ abstract Version(SemVer) from SemVer to SemVer {
     return !(other.equals(this));
 
   @:op(A>B) public function greaterThan(other : Version) {
-    if(major != other.major)
-      return major > other.major;
-    if(minor != other.minor)
-      return minor > other.minor;
-    if(patch != other.patch)
-      return patch > other.patch;
-    if(hasPre && other.hasPre)
-      return true;
-    return greaterThanIdentifiers(this.pre, (other : SemVer).pre);
+    if(hasPre && other.hasPre) {
+      return major == other.major
+        && minor == other.minor
+        && patch == other.patch
+        && greaterThanIdentifiers(this.pre, (other : SemVer).pre);
+    } else if(other.hasPre) {
+      if(major != other.major)
+        return major > other.major;
+      if(minor != other.minor)
+        return minor > other.minor;
+      if(patch != other.patch)
+        return patch > other.patch;
+      return !hasPre || greaterThanIdentifiers(this.pre, (other : SemVer).pre);
+    } else if(!hasPre) {
+      if(major != other.major)
+        return major > other.major;
+      if(minor != other.minor)
+        return minor > other.minor;
+      if(patch != other.patch)
+        return patch > other.patch;
+      return greaterThanIdentifiers(this.pre, (other : SemVer).pre);
+    } else {
+      return false;
+    }
   }
 
   @:op(A>=B) public function greaterThanOrEqual(other : Version)
