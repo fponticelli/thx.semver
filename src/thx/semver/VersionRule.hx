@@ -179,8 +179,8 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
     };
   }
 
-  @:to public function toString()
-    return switch this {
+  @:to public function toString() : String
+    return switch ((this : VersionComparator)) {
       case EqualVersion(ver):
         ver;
       case GreaterThanVersion(ver):
