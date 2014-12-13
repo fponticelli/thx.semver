@@ -5,8 +5,8 @@
   "classPath": "src",
   "tags": ["thx", "version", "semantic-version", "semver"],
   "description": "Semantic version library for Haxe. It follows the specifications for Semantic Versioning 2.0.0 described at http://semver.org/",
-  "releasenote": "better documentation",
-  "version": "0.1.0",
+  "releasenote": "Support Version Rules for matching version ranges",
+  "version": "0.2.0",
   "contributors": ["fponticelli"],
   "dependecies" : {}
 }
