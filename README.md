@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/fponticelli/thx.semver.svg)](https://travis-ci.org/fponticelli/thx.semver)
 
+## Version
+
 Semantic Version library for Haxe. The library provides an abstract type `thx.semver.Version` that represents a release version as described in the [Semantic Versioning Specification 2.0.0](http://semver.org/).
 
 To create a version you can use a string:
@@ -40,6 +42,25 @@ Also generating new versions is very easy:
 var v : Version = '0.9.17';
 trace(v.nextMinor()); // echoes '0.10.0'
 ```
+
+## Version Rules
+
+`thx.semver` support the same SemVer patterns adopted for [npm-semver](https://github.com/npm/node-semver). Note that this is neither a wrapper or a port but a library that conforms to the same specifications.
+
+The simplest way to define a Version Rule is to use the string format:
+
+```haxe
+var rule : VersionRule = '1.x || >=2.5.0 || 5.0.0 - 7.2.3';
+rule.isSatisfiedBy('1.2.3'); // holds true
+```
+
+You can also operate in the other direction:
+
+```haxe
+('1.2.3' : Version).satisfies('1.x || >=2.5.0 || 5.0.0 - 7.2.3'); // holds true
+```
+
+For more details on the patterns, refer to the previous link.
 
 ## install
 
