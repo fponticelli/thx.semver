@@ -70,7 +70,7 @@ abstract Version(SemVer) from SemVer to SemVer {
   }
 
   @:op(A==B) public function equals(other : Version) {
-    if(this == null || other == null || major != other.major || minor != other.minor || patch != other.patch)
+    if(major != other.major || minor != other.minor || patch != other.patch)
       return false;
     return equalsIdentifiers(this.pre, (other : SemVer).pre);
   }
