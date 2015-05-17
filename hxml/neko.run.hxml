@@ -1,0 +1,9 @@
+-cp src
+-cp test
+-lib utest
+-lib thx.core
+-neko bin/neko.n
+-main TestAll
+-D thx-semver
+
+-cmd neko bin/neko.n
