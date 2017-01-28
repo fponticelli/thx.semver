@@ -191,10 +191,11 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
         '<$ver';
       case LessThanOrEqualVersion(ver):
         '<=$ver';
-      case AndRule(a, b):
-        '$a $b';
+      case AndRule(a, b): {
+        (a : VersionRule) + ' ' + (b : VersionRule);
+      }
       case OrRule(a, b):
-        '$a || $b';
+        (a : VersionRule) + ' || ' + (b : VersionRule);
     };
 }
 
