@@ -315,4 +315,8 @@ class TestAll {
         Assert.isFalse((assertion.rule : VersionRule).isSatisfiedBy(unsatisfy), 'version "${unsatisfy}" should NOT satisfy rule "${assertion.rule}"');
     }
   }
+
+  public function testVersionRuleStringPatterns() {
+    Assert.equals('>=0.0.0 <1.0.0', ('0.x' : VersionRule).toString());
+  }
 }
