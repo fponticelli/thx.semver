@@ -122,7 +122,7 @@ abstract Version(SemVer) from SemVer to SemVer {
   inline function get_pre() return identifiersToString(this.pre);
   inline function get_hasPre() return this.pre.length > 0;
   inline function get_build() return identifiersToString(this.build);
-  inline function get_hasBuild() return this.pre.length > 0;
+  inline function get_hasBuild() return this.build.length > 0;
 
   static function identifiersToString(ids : Array<Identifier>)
     return ids.map(function(id) return switch id {
