@@ -19,7 +19,7 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
             throw 'invalid single pattern "$comp"';
           } else {
             // one term pattern
-            var v  = versionArray(VERSION),
+            var v:Array<Int> = versionArray(VERSION),
                 vf = v.concat([0, 0, 0]).slice(0, 3);
             switch [VERSION.matched(1), v.length] {
               case ["v", 0], ["=", 0], ["", 0], [null, 0]:
@@ -145,8 +145,8 @@ abstract VersionRule(VersionComparator) from VersionComparator to VersionCompara
 
   static var IS_DIGITS = ~/^\d+$/;
   static function versionArray(re : EReg) {
-    var arr = [],
-        t;
+    var arr:Array<Int> = [];
+    var t:String;
     for(i in 2...5) {
       t = re.matched(i);
       if(null != t && IS_DIGITS.match(t))
